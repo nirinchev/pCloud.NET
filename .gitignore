@@ -1,0 +1,10 @@
+[Oo]bj/
+[Bb]in/
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*.suo
+*.[Cc]ache
+.[Jj]ust[Cc]ode/
