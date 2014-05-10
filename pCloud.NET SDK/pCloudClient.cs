@@ -17,15 +17,16 @@ namespace pCloud.NET
 
         public static async Task<pCloudClient> CreateClientAsync(string username, string password)
         {
-            var client = new HttpClient { BaseAddress = new Uri("https://api.pcloud.com") };
-            var uri = string.Format("userInfo?getauth=1&logout=1&username={0}&password={0}");
+            var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
+            var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
+            var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}", username, password);
             dynamic userInfo = JToken.Parse(await client.GetStringAsync(uri));
             if (userInfo.result != 0)
             {
                 throw (Exception)CreateException(userInfo);
             }
 
-            return new pCloudClient(client, userInfo.auth);
+            return new pCloudClient(client, (string)userInfo.auth);
         }
 
         private pCloudClient(HttpClient httpClient, string authToken)
@@ -52,7 +53,8 @@ namespace pCloud.NET
 
         public async Task DeleteFolderAsync(long folderId, bool recursive)
         {
-
+            var method = recursive ? "deletefolderrecursive" : "deletefolder";
+            await this.GetJsonAsync(this.BuildRequestUri(method, new { folderid = folderId }));
         }
 
         public async Task<IEnumerable<StorageItem>> ListFolderAsync(long folderId)
@@ -61,19 +63,32 @@ namespace pCloud.NET
             var response = await this.GetJsonAsync(requestUri);
 
             var result = new List<StorageItem>();
-            foreach (var item in response.contents)
+            foreach (var item in response.metadata.contents)
             {
-                if (item.isfolder)
+                if ((bool)item.isfolder)
                 {
                     result.Add(item.ToObject<Folder>());
                 }
-                else if (item.isfile)
+                else if ((bool)item.isfile)
                 {
                     result.Add(item.ToObject<File>());
                 }
             }
 
             return result.ToArray();
+        }
+
+        public async Task<File> UploadFileAsync(Stream file, long parentFolderId, string name)
+        {
+            var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
+            var response = await this.httpClient.PostAsync(requestUri, new StreamContent(file));
+            dynamic json = JToken.Parse(await response.Content.ReadAsStringAsync());
+            if (json.result != 0)
+            {
+                throw (Exception)CreateException(json);
+            }
+
+            return json.metadata[0].ToObject<File>();
         }
 
         public async Task DownloadFileAsync(long fileId, Stream stream)
@@ -110,7 +125,7 @@ namespace pCloud.NET
         private string BuildRequestUri(string method, object parameters = null)
         {
             var uri = new StringBuilder(method);
-            uri.AppendFormat("?auth=", this.authToken);
+            uri.AppendFormat("?auth={0}", this.authToken);
 
             if (parameters != null)
             {
@@ -126,7 +141,7 @@ namespace pCloud.NET
 
         private static pCloudException CreateException(dynamic errorResponse)
         {
-            return new pCloudException(errorResponse.result, errorResponse.error);
+            return new pCloudException((int)errorResponse.result, (string)errorResponse.error);
         }
 	}
 }
