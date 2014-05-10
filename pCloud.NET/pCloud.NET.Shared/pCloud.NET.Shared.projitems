@@ -19,6 +19,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InverseBooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\QueryableSorting.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\SortDescriptors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\SortedObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IocConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalStorageConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LocalStorageService.cs" />
