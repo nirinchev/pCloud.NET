@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -65,37 +66,53 @@ namespace pCloud
                 rootFrame.ContentTransitions = null;
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
-				var navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
-				var localStorageService = SimpleIoc.Default.GetInstance<LocalStorageService>();
 
-				Type initialPageType = null;
-				string authToken;
-				if (localStorageService.TryGet(LocalStorageConstants.AuthTokenKey, out authToken, LocalStorageConstants.LoginContainer))
-				{
-					try
-					{
-						var client = await pCloudClient.CreateClientAsync(authToken);
-						IocConfig.RegisterpCloudClient(client);
-						initialPageType = typeof(MainPage);
-					}
-					catch
-					{
-					}
-				}
-
-				if (initialPageType == null)
-				{
-					initialPageType = typeof(LoginPage);
-				}
-
-                if (!navigationService.Navigate(initialPageType, e.Arguments))
-                {
-                    throw new Exception("Failed to create initial page");
-                }
+				await this.HandleLaunch<MainPage>(e.Arguments);
             }
 
             Window.Current.Activate();
         }
+
+		protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+		{
+			var rootFrame = new Frame();
+			Window.Current.Content = rootFrame;
+
+			await this.HandleLaunch<SharePage>(args.ShareOperation);
+
+			Window.Current.Activate();
+		}
+
+		private async Task HandleLaunch<T>(object navigationParameter) where T : Page
+		{
+			var navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
+			var localStorageService = SimpleIoc.Default.GetInstance<LocalStorageService>();
+
+			Type initialPageType = null;
+			string authToken;
+			if (localStorageService.TryGet(LocalStorageConstants.AuthTokenKey, out authToken, LocalStorageConstants.LoginContainer))
+			{
+				try
+				{
+					var client = await pCloudClient.CreateClientAsync(authToken);
+					IocConfig.RegisterpCloudClient(client);
+					initialPageType = typeof(T);
+				}
+				catch
+				{
+				}
+			}
+
+			if (initialPageType == null)
+			{
+				initialPageType = typeof(LoginPage);
+			}
+
+			if (!navigationService.Navigate(initialPageType, navigationParameter))
+			{
+				throw new Exception("Failed to create initial page");
+			}
+		}
 
 #if WINDOWS_PHONE_APP
         private void RootFrame_FirstNavigated(object sender, NavigationEventArgs e)

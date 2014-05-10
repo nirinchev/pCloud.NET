@@ -32,7 +32,7 @@
 		<TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10" FontSize="16" Height="30" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 		<PasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10" FontSize="16" Height="30" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 
-		<Button Content="Login" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,10,10,20" FontSize="22" Command="{Binding LoginCommand}" Visibility="{Binding IsBusy, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" LostFocus="OnLoginButtonLostFocus" />
+		<Button Content="Login" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,10,10,20" FontSize="22" Command="{Binding LoginCommand}" Visibility="{Binding IsBusy, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
 		<ProgressRing IsActive="{Binding IsBusy}" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,10,10,20" Width="20" Height="20" />
 	</Grid>
 

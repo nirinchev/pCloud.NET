@@ -36,7 +36,7 @@ namespace pCloud.NET
 		private static async Task<pCloudClient> CreateClientAsync(params Tuple<string, string>[] queryParams)
 		{
 			var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
-			var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
+			var client = new HttpClient(handler) { BaseAddress = new Uri("http://api.pcloud.com") };
 			var uri = string.Format("userinfo?getauth=1&logout=1&{0}", string.Join("&", queryParams.Select(q => string.Format("{0}={1}", q.Item1, q.Item2))));
 			var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
 			if (userInfo.result != 0)
@@ -101,7 +101,10 @@ namespace pCloud.NET
         public async Task<File> UploadFileAsync(Stream file, long parentFolderId, string name)
         {
             var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
-            var response = await this.httpClient.PostAsync(requestUri, new StreamContent(file));
+
+			var content = new MultipartFormDataContent();
+			content.Add(new StreamContent(file), Guid.NewGuid().ToString(), name);
+			var response = await this.httpClient.PostAsync(requestUri, content);
             var json = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
             if (json.result != 0)
             {
@@ -144,6 +147,12 @@ namespace pCloud.NET
             var response = await this.GetJsonAsync(this.BuildRequestUri("getfilepublink", new { fileid = fileId, expire = expires }));
             return response.link;
         }
+
+		public async Task<string> GetPublicFolderLinkAsync(long folderId, DateTime? expires)
+		{
+			var response = await this.GetJsonAsync(this.BuildRequestUri("getfolderpublink", new { folderid = folderId, expire = expires }));
+			return response.link;
+		}
 
         protected virtual void Dispose(bool disposing)
         {

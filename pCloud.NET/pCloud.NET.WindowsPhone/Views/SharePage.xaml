@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="pCloud.Views.SharePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:pCloud.Views"
+	xmlns:phone="Microsoft."
+	xmlns:converters="using:pCloud.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Page.Resources>
+		<converters:ThumbnailToImageConverter x:Key="ThumbnailToImageConverter" />
+		<converters:StringFormatConverter x:Key="StringFormatConverter" />
+	</Page.Resources>
+	
+    <Grid>
+		<ListView ItemsSource="{Binding SharedItems}">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MaxHeight="80" Stretch="Fill" Margin="10" Grid.RowSpan="2"/>
+						<TextBlock Text="{Binding Name}" Grid.Column="1" FontSize="22" Margin="10" />
+					</Grid>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+			<ListView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+				</Style>
+			</ListView.ItemContainerStyle>
+		</ListView>
+    </Grid>
+	
+	<Page.BottomAppBar>
+		<CommandBar>
+			<CommandBar.PrimaryCommands>
+				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" />
+				<AppBarButton Label="Share" Command="{Binding ShareCommand}" />
+				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" />
+			</CommandBar.PrimaryCommands>
+		</CommandBar>
+	</Page.BottomAppBar>
+</Page>
