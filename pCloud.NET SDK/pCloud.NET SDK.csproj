@@ -38,10 +38,11 @@
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dtos\DigestResponse.cs" />
-    <Compile Include="Helpers\HttpContentHelper.cs" />
-    <Compile Include="Helpers\HttpRequestHelper.cs" />
+    <Compile Include="File.cs" />
+    <Compile Include="Folder.cs" />
+    <Compile Include="StorageItem.cs" />
     <Compile Include="pCloudClient.cs" />
+    <Compile Include="pCloudException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
