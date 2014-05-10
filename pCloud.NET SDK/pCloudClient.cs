@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.IO;
+using System.Net.Http;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace pCloud.NET
 {
@@ -20,7 +19,7 @@ namespace pCloud.NET
             var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
             var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
             var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}", username, password);
-            dynamic userInfo = JToken.Parse(await client.GetStringAsync(uri));
+            var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
             if (userInfo.result != 0)
             {
                 throw (Exception)CreateException(userInfo);
@@ -41,14 +40,16 @@ namespace pCloud.NET
             GC.SuppressFinalize(this);
         }
 
-        public async Task CreateFolderAsync(long parentFolderId, string name)
+        public async Task<Folder> CreateFolderAsync(long parentFolderId, string name)
         {
-            await this.GetJsonAsync(this.BuildRequestUri("createfolder", new { folderid = parentFolderId, name = name }));
+            var response = await this.GetJsonAsync(this.BuildRequestUri("createfolder", new { folderid = parentFolderId, name = name }));
+            return response.metadata.ToObject<Folder>();
         }
 
-        public async Task RenameFolderAsync(long folderId, string toPath)
+        public async Task<Folder> RenameFolderAsync(long folderId, string toPath)
         {
-            await this.GetJsonAsync(this.BuildRequestUri("renamefolder", new { folderid = folderId, toPath = toPath }));
+            var response = await this.GetJsonAsync(this.BuildRequestUri("renamefolder", new { folderid = folderId, toPath = toPath }));
+            return response.metadata.ToObject<Folder>();
         }
 
         public async Task DeleteFolderAsync(long folderId, bool recursive)
@@ -69,7 +70,7 @@ namespace pCloud.NET
                 {
                     result.Add(item.ToObject<Folder>());
                 }
-                else if ((bool)item.isfile)
+                else
                 {
                     result.Add(item.ToObject<File>());
                 }
@@ -82,7 +83,7 @@ namespace pCloud.NET
         {
             var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
             var response = await this.httpClient.PostAsync(requestUri, new StreamContent(file));
-            dynamic json = JToken.Parse(await response.Content.ReadAsStringAsync());
+            var json = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
             if (json.result != 0)
             {
                 throw (Exception)CreateException(json);
@@ -96,12 +97,34 @@ namespace pCloud.NET
             var requestUri = this.BuildRequestUri("getfilelink", new { fileid = fileId });
             var downloadResponse = await this.GetJsonAsync(requestUri);
 
-            var fileUri = downloadResponse.hosts[0] + downloadResponse.path;
+            var fileUri = string.Format("https://{0}{1}", downloadResponse.hosts[0], downloadResponse.path);
             HttpResponseMessage response = await this.httpClient.GetAsync(fileUri, HttpCompletionOption.ResponseHeadersRead);
 
             await response.Content.CopyToAsync(stream);
         }
 
+        public async Task<File> CopyFileAsync(long fileId, long toFolderId, string toName)
+        {
+            var response = await this.GetJsonAsync(this.BuildRequestUri("copyfile", new { fileid = fileId, tofolderid = toFolderId, toname = toName}));
+            return response.metadata.ToObject<File>();
+        }
+
+        public async Task<File> RenameFileAsync(long fileId, long toFolderId, string toName)
+        {
+            var response = await this.GetJsonAsync(this.BuildRequestUri("renamefile", new { fileid = fileId, tofolderid = toFolderId, toname = toName }));
+            return response.metadata.ToObject<File>();
+        }
+
+        public async Task DeleteFileAsync(long fileId)
+        {
+            await this.GetJsonAsync(this.BuildRequestUri("deletefile", new { fileid = fileId }));
+        }
+
+        public async Task<string> GetPublicFileLinkAsync(long fileId, DateTime? expires)
+        {
+            var response = await this.GetJsonAsync(this.BuildRequestUri("getfilepublink", new { fileid = fileId, expire = expires }));
+            return response.link;
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -113,7 +136,8 @@ namespace pCloud.NET
 
         private async Task<dynamic> GetJsonAsync(string uri)
         {
-            dynamic json = JToken.Parse(await this.httpClient.GetStringAsync(uri));
+            var jsonString = await this.httpClient.GetStringAsync(uri);
+            dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonString);
             if (json.result != 0)
             {
                 throw (Exception)CreateException(json);
@@ -132,7 +156,10 @@ namespace pCloud.NET
                 foreach (var property in parameters.GetType().GetRuntimeProperties())
                 {
                     var value = property.GetValue(parameters);
-                    uri.AppendFormat("&{0}={1}", property.Name, Uri.EscapeDataString(value != null ? value.ToString() : string.Empty));
+                    if (value != null)
+                    {
+                        uri.AppendFormat("&{0}={1}", property.Name, Uri.EscapeDataString(value.ToString()));
+                    }
                 }
             }
 
