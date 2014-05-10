@@ -8,7 +8,6 @@ namespace pCloud.ViewModels
 {
     public class LoginViewModel : pCloudViewModelBase
     {
-		private readonly pCloudClient client = SimpleIoc.Default.GetInstance<pCloudClient>();
 		private readonly NavigationService navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
 
 		private string username;
@@ -78,15 +77,9 @@ namespace pCloud.ViewModels
 			this.IsBusy = true;
 			try
 			{
-				var didLogin = await client.Login(this.Username, this.Password);
-				if (didLogin)
-				{
-					this.navigationService.Navigate<MainPage>();
-				}
-				else
-				{
-					// show error message
-				}
+				var client = await pCloudClient.CreateClientAsync(this.Username, this.Password);
+				SimpleIoc.Default.Register<pCloudClient>(() => client);
+				this.navigationService.Navigate<MainPage>();
 			}
 			catch
 			{
