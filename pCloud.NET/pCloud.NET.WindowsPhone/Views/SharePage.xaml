@@ -19,36 +19,23 @@
 		<ListView ItemsSource="{Binding SharedItems}">
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-
-						<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MaxHeight="80" Stretch="Fill" Margin="10" Grid.RowSpan="2"/>
-						<TextBlock Text="{Binding Name}" Grid.Column="1" FontSize="22" Margin="10" />
-					</Grid>
+					<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MaxHeight="84" MaxWidth="84" Stretch="UniformToFill" Margin="4" />
 				</DataTemplate>
 			</ListView.ItemTemplate>
-			<ListView.ItemContainerStyle>
-				<Style TargetType="ListViewItem">
-					<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-				</Style>
-			</ListView.ItemContainerStyle>
+			<ListView.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapGrid Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ListView.ItemsPanel>
 		</ListView>
     </Grid>
 	
 	<Page.BottomAppBar>
 		<CommandBar>
 			<CommandBar.PrimaryCommands>
-				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" />
-				<AppBarButton Label="Share" Command="{Binding ShareCommand}" />
-				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" />
+				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" />
+				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" />
+				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" />
 			</CommandBar.PrimaryCommands>
 		</CommandBar>
 	</Page.BottomAppBar>
