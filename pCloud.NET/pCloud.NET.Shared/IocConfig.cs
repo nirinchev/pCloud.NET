@@ -15,13 +15,14 @@ namespace pCloud
 			SimpleIoc.Default.Register<LoginViewModel>();
 			SimpleIoc.Default.Register<NavigationService>();
 			SimpleIoc.Default.Register<LocalStorageService>();
+			SimpleIoc.Default.Register<ShareViewModel>();
 		}
 
 		public static void RegisterpCloudClient(pCloudClient client)
 		{
 			if (SimpleIoc.Default.IsRegistered<pCloudClient>())
 			{
-				throw new InvalidOperationException("pCloudClient has already been registered");
+				SimpleIoc.Default.Unregister<pCloudClient>();
 			}
 
 			SimpleIoc.Default.Register<pCloudClient>(() => client);

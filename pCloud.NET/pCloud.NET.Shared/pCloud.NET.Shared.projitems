@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ClientConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanConverterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InverseBooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InvertedBooleanToVisibilityConverter.cs" />
@@ -22,11 +23,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\QueryableSorting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SortDescriptors.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SortedObservableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\StringFormatConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\ThumbnailToImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IocConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalStorageConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LocalStorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\pCloudViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SharedFileViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SharedItemViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShareViewModel.cs" />
   </ItemGroup>
 </Project>
