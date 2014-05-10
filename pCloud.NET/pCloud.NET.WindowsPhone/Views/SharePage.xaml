@@ -12,14 +12,13 @@
 
 	<Page.Resources>
 		<converters:ThumbnailToImageConverter x:Key="ThumbnailToImageConverter" />
-		<converters:StringFormatConverter x:Key="StringFormatConverter" />
 	</Page.Resources>
 	
     <Grid>
 		<ListView ItemsSource="{Binding SharedItems}">
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MaxHeight="84" MaxWidth="84" Stretch="UniformToFill" Margin="4" />
+					<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MinHeight="84" MinWidth="84" MaxHeight="84" MaxWidth="84" Stretch="UniformToFill" Margin="4" />
 				</DataTemplate>
 			</ListView.ItemTemplate>
 			<ListView.ItemsPanel>

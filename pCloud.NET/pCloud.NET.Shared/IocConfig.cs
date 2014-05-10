@@ -22,7 +22,7 @@ namespace pCloud
 		{
 			if (SimpleIoc.Default.IsRegistered<pCloudClient>())
 			{
-				throw new InvalidOperationException("pCloudClient has already been registered");
+				SimpleIoc.Default.Unregister<pCloudClient>();
 			}
 
 			SimpleIoc.Default.Register<pCloudClient>(() => client);

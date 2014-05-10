@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -19,7 +17,12 @@ namespace pCloud.ViewModels
 		protected override async Task GetAdditionalInformation(IStorageItem storageItem)
 		{
 			var file = (StorageFile)storageItem;
-			this.Thumbnail = await file.GetThumbnailAsync(ThumbnailMode.ListView);
+			var thumb = await Task.Run(async () =>
+			{
+				return await file.GetThumbnailAsync(ThumbnailMode.ListView, 120);
+			});
+
+			this.Thumbnail = thumb;
 		}
 	}
 }
