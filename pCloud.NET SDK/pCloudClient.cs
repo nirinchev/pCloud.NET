@@ -10,11 +10,12 @@ namespace pCloud.NET
 	{
 		private const string GetDigestMethod = "getdigest";
 
-		public async Task Login(string username, string password)
+		public async Task<bool> Login(string username, string password)
 		{
 			var digestEndpoint = GetEndpoint(GetDigestMethod);
 			var digestResponse = await HttpRequestHelper.Get<DigestResponse>(digestEndpoint);
 			var digest = digestResponse.Digest;
+			return true;
 		}
 
 		private static string GetEndpoint(string relativeEndpoint)
