@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pCloud.NET", "pCloud.NET", "{B6A305C4-1ACC-45D9-B53E-5ADA5CFA6E1B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pCloud.NET Client", "pCloud.NET Client", "{B6A305C4-1ACC-45D9-B53E-5ADA5CFA6E1B}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "pCloud.NET.Shared", "pCloud.NET\pCloud.NET.Shared\pCloud.NET.Shared.shproj", "{A01EFCAE-F3DA-43DC-9568-B6B31C0AFC4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pCloud.NET.Windows", "pCloud.NET\pCloud.NET.Windows\pCloud.NET.Windows.csproj", "{4FC1B1E9-67A7-4CDF-8118-E4B7ACEE54BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pCloud.NET.WindowsPhone", "pCloud.NET\pCloud.NET.WindowsPhone\pCloud.NET.WindowsPhone.csproj", "{2C4B1565-D6F0-4A1B-AED9-D2154F3F93E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pCloud.NET SDK", "pCloud.NET SDK\pCloud.NET SDK.csproj", "{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -98,6 +100,21 @@ Global
 		{2C4B1565-D6F0-4A1B-AED9-D2154F3F93E7}.Release|x86.ActiveCfg = Release|x86
 		{2C4B1565-D6F0-4A1B-AED9-D2154F3F93E7}.Release|x86.Build.0 = Release|x86
 		{2C4B1565-D6F0-4A1B-AED9-D2154F3F93E7}.Release|x86.Deploy.0 = Release|x86
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.DebugWP|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.DebugWP|Any CPU.Build.0 = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.DebugWP|ARM.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.DebugWP|x64.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.DebugWP|x86.ActiveCfg = Debug|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Release|ARM.ActiveCfg = Release|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB5F5FBA-5EC6-4D62-8E5A-2884B3589919}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

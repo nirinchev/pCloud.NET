@@ -121,6 +121,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\pCloud.NET SDK\pCloud.NET SDK.csproj">
+      <Project>{ab5f5fba-5ec6-4d62-8e5a-2884b3589919}</Project>
+      <Name>pCloud.NET SDK</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
