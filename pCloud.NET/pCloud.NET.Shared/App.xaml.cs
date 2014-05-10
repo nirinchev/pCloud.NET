@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using pCloud.Services;
 using pCloud.ViewModels;
 using pCloud.Views;
 using System;
@@ -63,8 +64,8 @@ namespace pCloud
                 rootFrame.ContentTransitions = null;
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
-
-                if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
+				var navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
+                if (!navigationService.Navigate<LoginPage>(e.Arguments))
                 {
                     throw new Exception("Failed to create initial page");
                 }

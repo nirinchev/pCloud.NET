@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using GalaSoft.MvvmLight.Ioc;
 using Windows.UI.Xaml.Controls;
-using pCloud.ViewModels;
 
 namespace pCloud.Views
 {
@@ -11,7 +9,6 @@ namespace pCloud.Views
 		public MainPage()
 		{
 			this.InitializeComponent();
-			this.DataContext = SimpleIoc.Default.GetInstance<MainViewModel>();
 		}
 	}
 }

@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using pCloud.NET;
+using pCloud.Services;
 using pCloud.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,9 @@ namespace pCloud
     {
 		public static void RegisterTypes()
 		{
-			SimpleIoc.Default.Register<MainViewModel>();
+			SimpleIoc.Default.Register<LoginViewModel>();
+			SimpleIoc.Default.Register<NavigationService>();
+			SimpleIoc.Default.Register<pCloudClient>();
 		}
     }
 }
