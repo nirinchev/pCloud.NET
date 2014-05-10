@@ -15,8 +15,8 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="pCloud.NET.Windows.App">
-      <m2:VisualElements DisplayName="pCloud.NET.Windows" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="pCloud.NET.Windows" ForegroundText="light" BackgroundColor="#464646">
-        <m2:SplashScreen Image="Assets\SplashScreen.png" />
+      <m2:VisualElements DisplayName="pCloud.NET" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="pCloud client for WinRT." ForegroundText="light" BackgroundColor="#464646">
+        <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#1B191A" />
       </m2:VisualElements>
       <Extensions>
         <Extension Category="windows.shareTarget">
