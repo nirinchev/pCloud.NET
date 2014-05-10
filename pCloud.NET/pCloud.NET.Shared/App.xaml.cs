@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using pCloud.NET;
 using pCloud.Services;
 using pCloud.ViewModels;
 using pCloud.Views;
@@ -36,7 +37,7 @@ namespace pCloud
 			IocConfig.RegisterTypes();
         }
 
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
 
@@ -65,7 +66,29 @@ namespace pCloud
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
 				var navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
-                if (!navigationService.Navigate<LoginPage>(e.Arguments))
+				var localStorageService = SimpleIoc.Default.GetInstance<LocalStorageService>();
+
+				Type initialPageType = null;
+				string authToken;
+				if (localStorageService.TryGet(LocalStorageConstants.AuthTokenKey, out authToken, LocalStorageConstants.LoginContainer))
+				{
+					try
+					{
+						var client = await pCloudClient.CreateClientAsync(authToken);
+						IocConfig.RegisterpCloudClient(client);
+						initialPageType = typeof(MainPage);
+					}
+					catch
+					{
+					}
+				}
+
+				if (initialPageType == null)
+				{
+					initialPageType = typeof(LoginPage);
+				}
+
+                if (!navigationService.Navigate(initialPageType, e.Arguments))
                 {
                     throw new Exception("Failed to create initial page");
                 }

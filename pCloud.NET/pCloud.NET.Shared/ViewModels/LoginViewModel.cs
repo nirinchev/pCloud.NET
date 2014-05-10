@@ -78,7 +78,7 @@ namespace pCloud.ViewModels
 			try
 			{
 				var client = await pCloudClient.CreateClientAsync(this.Username, this.Password);
-				SimpleIoc.Default.Register<pCloudClient>(() => client);
+				IocConfig.RegisterpCloudClient(client);
 				this.navigationService.Navigate<MainPage>();
 			}
 			catch

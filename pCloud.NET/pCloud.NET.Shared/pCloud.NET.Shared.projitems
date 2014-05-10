@@ -20,6 +20,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IocConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocalStorageConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LocalStorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\pCloudViewModelBase.cs" />

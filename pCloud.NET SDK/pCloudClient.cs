@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -14,19 +15,37 @@ namespace pCloud.NET
         private readonly HttpClient httpClient;
         private readonly string authToken;
 
-        public static async Task<pCloudClient> CreateClientAsync(string username, string password)
-        {
-            var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
-            var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
-            var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}", username, password);
-            var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
-            if (userInfo.result != 0)
-            {
-                throw (Exception)CreateException(userInfo);
-            }
+		public string AuthToken
+		{
+			get
+			{
+				return this.authToken;
+			}
+		}
 
-            return new pCloudClient(client, (string)userInfo.auth);
+        public static Task<pCloudClient> CreateClientAsync(string username, string password)
+        {
+			return CreateClientAsync(Tuple.Create("username", username), Tuple.Create("password", password));
         }
+
+		public static Task<pCloudClient> CreateClientAsync(string authToken)
+		{
+			return CreateClientAsync(Tuple.Create("auth", authToken));
+		}
+
+		private static async Task<pCloudClient> CreateClientAsync(params Tuple<string, string>[] queryParams)
+		{
+			var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
+			var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
+			var uri = string.Format("userinfo?getauth=1&logout=1&{0}", string.Join("&", queryParams.Select(q => string.Format("{0}={1}", q.Item1, q.Item2))));
+			var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
+			if (userInfo.result != 0)
+			{
+				throw (Exception)CreateException(userInfo);
+			}
+
+			return new pCloudClient(client, (string)userInfo.auth);
+		}
 
         private pCloudClient(HttpClient httpClient, string authToken)
         {

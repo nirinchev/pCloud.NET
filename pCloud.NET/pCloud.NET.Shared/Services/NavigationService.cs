@@ -16,14 +16,27 @@ namespace pCloud.Services
 			}
 		}
 
-		public bool Navigate<T>() where T : Page
+		public bool Navigate(Type type)
 		{
-			return this.CurrentFrame.Navigate(typeof(T));
+			return this.CurrentFrame.Navigate(type);
 		}
 
-		public bool Navigate<T>(object parameter) where T : Page
+		public bool Navigate(Type type, object parameter)
 		{
-			return this.CurrentFrame.Navigate(typeof(T), parameter);
+			return this.CurrentFrame.Navigate(type, parameter);
 		}
     }
+
+	public static class NavigationServiceExtensions
+	{
+		public static bool Navigate<T>(this NavigationService navigationService) where T : Page
+		{
+			return navigationService.Navigate(typeof(T));
+		}
+
+		public static bool Navigate<T>(this NavigationService navigationService, object parameter) where T : Page
+		{
+			return navigationService.Navigate(typeof(T), parameter);
+		}
+	}
 }

@@ -14,6 +14,19 @@ namespace pCloud
 		{
 			SimpleIoc.Default.Register<LoginViewModel>();
 			SimpleIoc.Default.Register<NavigationService>();
+			SimpleIoc.Default.Register<LocalStorageService>();
+		}
+
+		public static void RegisterpCloudClient(pCloudClient client)
+		{
+			if (SimpleIoc.Default.IsRegistered<pCloudClient>())
+			{
+				throw new InvalidOperationException("pCloudClient has already been registered");
+			}
+
+			SimpleIoc.Default.Register<pCloudClient>(() => client);
+			var localStorageService = SimpleIoc.Default.GetInstance<LocalStorageService>();
+			localStorageService.Set(LocalStorageConstants.AuthTokenKey, client.AuthToken, LocalStorageConstants.LoginContainer);
 		}
     }
 }
