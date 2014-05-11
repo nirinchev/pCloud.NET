@@ -26,28 +26,25 @@ namespace pCloud.NET
 			}
 		}
 
-        public static Task<pCloudClient> CreateClientAsync(string username, string password)
+        public static async Task<pCloudClient> CreateClientAsync(string username, string password)
         {
-			return CreateClientAsync(Tuple.Create("username", username), Tuple.Create("password", password));
+            var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
+            var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
+            var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}}", Uri.EscapeDataString(username), Uri.EscapeDataString(password));
+            var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
+            if (userInfo.result != 0)
+            {
+                throw (Exception)CreateException(userInfo);
+            }
+
+            return new pCloudClient(client, (string)userInfo.auth);
         }
 
-		public static Task<pCloudClient> CreateClientAsync(string authToken)
+		public static pCloudClient FromAuthToken(string authToken)
 		{
-			return CreateClientAsync(Tuple.Create("auth", authToken));
-		}
-
-		private static async Task<pCloudClient> CreateClientAsync(params Tuple<string, string>[] queryParams)
-		{
-			var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
-			var client = new HttpClient(handler) { BaseAddress = new Uri("http://api.pcloud.com") };
-			var uri = string.Format("userinfo?getauth=1&logout=1&{0}", string.Join("&", queryParams.Select(q => string.Format("{0}={1}", q.Item1, q.Item2))));
-			var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
-			if (userInfo.result != 0)
-			{
-				throw (Exception)CreateException(userInfo);
-			}
-
-			return new pCloudClient(client, (string)userInfo.auth);
+            var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
+            var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
+            return new pCloudClient(client, authToken);
 		}
 
         private pCloudClient(HttpClient httpClient, string authToken)

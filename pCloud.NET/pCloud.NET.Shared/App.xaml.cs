@@ -38,7 +38,7 @@ namespace pCloud
 			IocConfig.RegisterTypes();
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
 
@@ -67,23 +67,23 @@ namespace pCloud
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
 
-				await this.HandleLaunch<MainPage>(e.Arguments);
+				this.HandleLaunch<MainPage>(e.Arguments);
             }
 
             Window.Current.Activate();
         }
 
-		protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+		protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
 		{
 			var rootFrame = new Frame();
 			Window.Current.Content = rootFrame;
 
-			await this.HandleLaunch<SharePage>(args.ShareOperation);
+			this.HandleLaunch<SharePage>(args.ShareOperation);
 
 			Window.Current.Activate();
 		}
 
-		private async Task HandleLaunch<T>(object navigationParameter) where T : Page
+		private void HandleLaunch<T>(object navigationParameter) where T : Page
 		{
 			var navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
 			var localStorageService = SimpleIoc.Default.GetInstance<LocalStorageService>();
@@ -94,7 +94,7 @@ namespace pCloud
 			{
 				try
 				{
-					var client = await pCloudClient.CreateClientAsync(authToken);
+					var client = pCloudClient.FromAuthToken(authToken);
 					IocConfig.RegisterpCloudClient(client);
 					initialPageType = typeof(T);
 				}
