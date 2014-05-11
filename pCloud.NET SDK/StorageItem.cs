@@ -27,7 +27,7 @@ namespace pCloud.NET
         public bool HasThumbnail { get; set; }
 
         [DataMember(Name = "icon")]
-        public string Icon { get; set; }
+        public Icon Icon { get; set; }
 
         internal StorageItem()
         {

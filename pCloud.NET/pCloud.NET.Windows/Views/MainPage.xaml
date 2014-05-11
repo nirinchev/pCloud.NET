@@ -12,7 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:StorageItemIconUriConverter x:Key="StorageItemIconUriConverter" />
+        <converters:StorageItemIconToSymbolConverter x:Key="StorageItemIconToSymbolConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:FileSizeConverter x:Key="FileSizeConverter" />
         <pCloud:StorageItemTemplateSelector x:Key="StorageItemTemplateSelector">
@@ -23,11 +23,9 @@
                             <ColumnDefinition Width="70" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Image Width="48" Height="48" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding Converter={StaticResource StorageItemIconUriConverter}, ConverterParameter=48x48}" />
-                            </Image.Source>
-                        </Image>
+                        <Viewbox Stretch="Uniform" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <TextBlock FontFamily="Segoe UI Symbol" Text="{Binding Icon, Converter={StaticResource StorageItemIconToSymbolConverter}}" />
+                        </Viewbox>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="15,0,0,0" />
                     </Grid>
                 </DataTemplate>
@@ -43,11 +41,9 @@
                             <RowDefinition Height="0.5*" />
                             <RowDefinition Height="0.5*" />
                         </Grid.RowDefinitions>
-                        <Image Width="48" Height="48" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding Converter={StaticResource StorageItemIconUriConverter}, ConverterParameter=48x48}" />
-                            </Image.Source>
-                        </Image>
+                        <Viewbox Grid.RowSpan="2" Stretch="Uniform" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <TextBlock FontFamily="Segoe UI Symbol" Text="{Binding Icon, Converter={StaticResource StorageItemIconToSymbolConverter}}" />
+                        </Viewbox>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="15,0,0,0" />
                         <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="15,0,0,0">
                                 <Run Text="{Binding Size, Converter={StaticResource FileSizeConverter}}" />
@@ -105,7 +101,7 @@
         <Border Grid.RowSpan="2" Background="Gray" Opacity="0.7" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Button Command="{Binding CancelOperationCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" />
         </Border>
-        <Grid Background="Black" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
               Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*" />
@@ -127,7 +123,7 @@
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="ClearSelection" Label="Clear selection" Command="{Binding ClearSelectionCommand}" />
                 <AppBarButton Icon="Link" Label="Copy link" Command="{Binding CopyLinkCommand}" />
-                <AppBarButton Icon="AllApps" Label="Open with" Command="{Binding OpenWithCommand}" />
+                <AppBarButton Icon="OpenWith" Label="Open with" Command="{Binding OpenWithCommand}" />
                 <AppBarButton Icon="Delete" Label="Delete" Command="{Binding DeleteItemsCommand}" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
