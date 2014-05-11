@@ -228,12 +228,24 @@ namespace pCloud.ViewModels
             var options = new LauncherOptions
             {
 #if WINDOWS_APP
-				DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMinimum,
+				DesiredRemainingView = this.GetPreferredViewSizeForFile(file),
 #endif
                 DisplayApplicationPicker = displayApplicationPicker
             };
             await Launcher.LaunchFileAsync(tempFile, options);
         }
+
+#if WINDOWS_APP
+        private Windows.UI.ViewManagement.ViewSizePreference GetPreferredViewSizeForFile(File file)
+        {
+            if (file.Category == Category.Audio)
+            {
+                return Windows.UI.ViewManagement.ViewSizePreference.UseMore;
+            }
+
+            return Windows.UI.ViewManagement.ViewSizePreference.UseLess;
+        }
+#endif
 
         private IDisposable ShowProgress(string message, CancellationTokenSource cts = null)
         {

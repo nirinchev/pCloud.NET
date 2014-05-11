@@ -12,5 +12,8 @@ namespace pCloud.NET
 
         [DataMember(Name = "contenttype")]
         public string ContentType { get; set; }
+
+        [DataMember(Name = "category")]
+        public Category Category { get; set; }
     }
 }
