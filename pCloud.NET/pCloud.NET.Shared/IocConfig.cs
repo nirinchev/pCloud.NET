@@ -14,6 +14,7 @@ namespace pCloud
 		{
 			SimpleIoc.Default.Register<LoginViewModel>();
 			SimpleIoc.Default.Register<NavigationService>();
+			SimpleIoc.Default.Register<NotificationService>();
 			SimpleIoc.Default.Register<LocalStorageService>();
 			SimpleIoc.Default.Register<ShareViewModel>();
 		}

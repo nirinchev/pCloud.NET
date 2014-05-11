@@ -15,7 +15,7 @@ using Windows.UI.Core;
 
 namespace pCloud.ViewModels
 {
-    public class ShareViewModel : pCloudViewModelBase
+    public partial class ShareViewModel : pCloudViewModelBase
     {
 		private readonly ObservableCollection<SharedItemViewModelBase> sharedItems;
 		private readonly pCloudClient pCloudClient = SimpleIoc.Default.GetInstance<pCloudClient>();
@@ -25,7 +25,6 @@ namespace pCloud.ViewModels
 		public RelayCommand UploadCommand { get; set; }
 		public RelayCommand ShareCommand { get; set; }
 		public RelayCommand CancelCommand { get; set; }
-
 
 		public ObservableCollection<SharedItemViewModelBase> SharedItems
 		{
@@ -40,7 +39,7 @@ namespace pCloud.ViewModels
 			this.sharedItems = new ObservableCollection<SharedItemViewModelBase>();
 			this.UploadCommand = new RelayCommand(this.UploadItems, this.SharedItems.Any);
 			this.ShareCommand = new RelayCommand(this.ShareItems, this.SharedItems.Any);
-			this.CancelCommand = new RelayCommand(this.Cancel);
+			this.CancelCommand = new RelayCommand(this.Complete);
 		}
 
 		public async void Initialize(ShareOperation operation)
@@ -53,36 +52,41 @@ namespace pCloud.ViewModels
 				{
 					try
 					{
-						var sharedStorageItems = await operation.Data.GetStorageItemsAsync();
-
-						this.SharedItems.Clear();
-
-						foreach (var item in sharedStorageItems.OfType<StorageFolder>())
-						{
-							//this.SharedItems.Add(new SharedItemViewModel
-						}
-
-						foreach (var item in sharedStorageItems.OfType<StorageFile>())
-						{
-							this.SharedItems.Add(new SharedFileViewModel(item));
-						}
-
-						this.UploadCommand.RaiseCanExecuteChanged();
-						this.ShareCommand.RaiseCanExecuteChanged();
+						this.ClearItems();
 					}
 					catch
 					{
-						// TODO
 					}
+
+					var sharedStorageItems = await operation.Data.GetStorageItemsAsync();
+
+					foreach (var item in sharedStorageItems.OfType<StorageFile>())
+					{
+						this.SharedItems.Add(new SharedFileViewModel(item));
+					}
+
+					this.UploadCommand.RaiseCanExecuteChanged();
+					this.ShareCommand.RaiseCanExecuteChanged();
 				} 
 			}
 		}
 
-		private void Cancel()
+		private void Complete()
 		{
+			this.ClearItems();
 			this.currentOperation.ReportCompleted();
 		}
-    
+
+		private void ClearItems()
+		{
+			foreach (var item in this.SharedItems)
+			{
+				item.Dispose();
+			}
+
+			this.SharedItems.Clear();
+		}
+
 		private async void UploadItems()
 		{
 			this.currentOperation.ReportStarted();
@@ -92,7 +96,7 @@ namespace pCloud.ViewModels
 
 				var test = await UploadFiles(parentFolderId);
 
-				this.currentOperation.ReportCompleted();
+				this.Complete();
 			}
 			catch
 			{
@@ -115,9 +119,9 @@ namespace pCloud.ViewModels
 					var newFolder = await this.pCloudClient.CreateFolderAsync(parentFolderId, DateTime.Now.ToString("yyyy.MM.dd - HH.mm.ss"));
 					parentFolderId = newFolder.FolderId;
 				}
-
+				
 				var uploadedFiles = await this.UploadFiles(parentFolderId);
-
+				
 				string shareLink;
 				if (isFolderUpload)
 				{
@@ -128,13 +132,15 @@ namespace pCloud.ViewModels
 					shareLink = await pCloudClient.GetPublicFileLinkAsync(uploadedFiles.First().FileId, null);
 				}
 
-				this.currentOperation.ReportCompleted();
+				this.HandleShareRequested(shareLink);
 			}
 			catch
 			{
 				this.currentOperation.ReportError("An error occured while sharing the files. Try again later.");
 			}
 		}
+
+		partial void HandleShareRequested(string shareLink);
 
 		private async Task<IEnumerable<File>> UploadFiles(long parentFolderId)
 		{

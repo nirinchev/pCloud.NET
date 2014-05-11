@@ -12,10 +12,12 @@
 
 	<Page.Resources>
 		<converters:ThumbnailToImageConverter x:Key="ThumbnailToImageConverter" />
+		<converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
 	</Page.Resources>
 	
     <Grid>
-		<ListView ItemsSource="{Binding SharedItems}">
+		<ListView ItemsSource="{Binding SharedItems}" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<Image Source="{Binding Thumbnail, Converter={StaticResource ThumbnailToImageConverter}}" MinHeight="84" MinWidth="84" MaxHeight="84" MaxWidth="84" Stretch="UniformToFill" Margin="4" />
@@ -27,14 +29,26 @@
 				</ItemsPanelTemplate>
 			</ListView.ItemsPanel>
 		</ListView>
+
+
+		<Grid Visibility="{Binding IsUrlGenerated, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<TextBlock Text="Copy the link and share it with your friends" FontSize="20" Margin="10" HorizontalAlignment="Stretch" />
+			<TextBox IsReadOnly="True" Text="{Binding Url}" SelectionStart="0" SelectionLength="{Binding UrlLength}" FontSize="22" Margin="10"  HorizontalAlignment="Stretch" Grid.Row="1" />
+		</Grid>
     </Grid>
 	
 	<Page.BottomAppBar>
-		<CommandBar>
+		<CommandBar >
 			<CommandBar.PrimaryCommands>
-				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" />
-				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" />
-				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" />
+				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
+				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
+				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
+				<AppBarButton Label="Done" Command="{Binding CancelCommand}" Icon="Accept" Visibility="{Binding IsUrlGenerated, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</CommandBar.PrimaryCommands>
 		</CommandBar>
 	</Page.BottomAppBar>

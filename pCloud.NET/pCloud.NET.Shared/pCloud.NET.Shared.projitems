@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LocalStorageConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LocalStorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\NotificationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\pCloudViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SharedFileViewModel.cs" />

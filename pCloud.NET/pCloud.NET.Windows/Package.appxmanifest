@@ -3,7 +3,7 @@
   <Identity Name="5c36de17-3e5a-4522-89fc-1d3854b12471" Publisher="CN=killer4o" Version="1.0.0.0" />
   <Properties>
     <DisplayName>pCloud.NET.Windows</DisplayName>
-    <PublisherDisplayName>killer4o</PublisherDisplayName>
+    <PublisherDisplayName>pCloud.Net</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="pCloud.NET.Windows.App">
-      <m2:VisualElements DisplayName="pCloud.NET" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="pCloud client for WinRT." ForegroundText="light" BackgroundColor="#464646">
+      <m2:VisualElements DisplayName="pCloud.NET" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="pCloud client for WinRT." ForegroundText="light" BackgroundColor="#464646" ToastCapable="true">
         <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#1B191A" />
       </m2:VisualElements>
       <Extensions>
