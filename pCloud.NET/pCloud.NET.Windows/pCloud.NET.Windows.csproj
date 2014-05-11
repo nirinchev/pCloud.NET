@@ -104,14 +104,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ClientConstants.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\FolderViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="Views\FolderPage.xaml.cs">
+      <DependentUpon>FolderPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SharePage.xaml.cs">
       <DependentUpon>SharePage.xaml</DependentUpon>
@@ -136,7 +136,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MainPage.xaml">
+    <Page Include="Views\FolderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,12 +168,6 @@
   <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
-    </SDKReference>
-    <SDKReference Include="Microsoft.PlayerFramework.Xaml, Version=1.8.2.2">
-      <Name>Microsoft Player Framework</Name>
-    </SDKReference>
-    <SDKReference Include="Microsoft.PlayerFramework.Xaml.Adaptive, Version=1.8.2.2">
-      <Name>Microsoft Player Framework Adaptive Streaming Plugin</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

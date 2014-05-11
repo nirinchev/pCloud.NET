@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace pCloud.NET
 {
@@ -6,5 +7,11 @@ namespace pCloud.NET
     {
         [DataMember(Name = "folderid")]
         public long FolderId { get; set; }
+    }
+
+    public class ListedFolder : Folder
+    {
+        [IgnoreDataMember]
+        public IEnumerable<StorageItem> Contents { get; set; }
     }
 }

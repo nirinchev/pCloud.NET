@@ -186,8 +186,8 @@ namespace pCloud.ViewModels
 
 		private async Task<long> GetUploadFolderId()
 		{
-			var items = await this.pCloudClient.ListFolderAsync(ClientConstants.RootFolderId);
-			var wpFolder = items.OfType<Folder>().FirstOrDefault(f => f.Name.Equals(ClientConstants.DefaultFolderName, StringComparison.OrdinalIgnoreCase));
+			var folder = await this.pCloudClient.ListFolderAsync(ClientConstants.RootFolderId);
+			var wpFolder = folder.Contents.OfType<Folder>().FirstOrDefault(f => f.Name.Equals(ClientConstants.DefaultFolderName, StringComparison.OrdinalIgnoreCase));
 			if (wpFolder == null)
 			{
 				wpFolder = await this.pCloudClient.CreateFolderAsync(ClientConstants.RootFolderId, ClientConstants.DefaultFolderName);

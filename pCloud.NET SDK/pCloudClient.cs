@@ -31,7 +31,7 @@ namespace pCloud.NET
         {
             var handler = new EncodingRewriterMessageHandler { InnerHandler = new HttpClientHandler() };
             var client = new HttpClient(handler) { BaseAddress = new Uri("https://api.pcloud.com") };
-            var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}}", Uri.EscapeDataString(username), Uri.EscapeDataString(password));
+            var uri = string.Format("userinfo?getauth=1&logout=1&username={0}&password={1}", Uri.EscapeDataString(username), Uri.EscapeDataString(password));
             var userInfo = JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(uri));
             if (userInfo.result != 0)
             {
@@ -78,25 +78,27 @@ namespace pCloud.NET
             await this.GetJsonAsync(this.BuildRequestUri(method, new { folderid = folderId }));
         }
 
-        public async Task<IEnumerable<StorageItem>> ListFolderAsync(long folderId)
+        public async Task<ListedFolder> ListFolderAsync(long folderId)
         {
             var requestUri = this.BuildRequestUri("listfolder", new { folderid = folderId });
             var response = await this.GetJsonAsync(requestUri);
 
-            var result = new List<StorageItem>();
+            var contents = new List<StorageItem>();
             foreach (var item in response.metadata.contents)
             {
                 if ((bool)item.isfolder)
                 {
-                    result.Add(item.ToObject<Folder>());
+                    contents.Add(item.ToObject<Folder>());
                 }
                 else
                 {
-                    result.Add(item.ToObject<File>());
+                    contents.Add(item.ToObject<File>());
                 }
             }
 
-            return result.ToArray();
+            var result = response.metadata.ToObject<ListedFolder>();
+            result.Contents = contents.ToArray();
+            return result;
         }
 
         public async Task<File> UploadFileAsync(Stream file, long parentFolderId, string name, CancellationToken cancellationToken)

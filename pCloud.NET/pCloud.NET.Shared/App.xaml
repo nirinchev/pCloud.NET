@@ -5,14 +5,14 @@
     xmlns:local="using:pCloud.NET" RequestedTheme="Light">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="BaseColor">#17BDCF</Color>
+            <Color x:Key="BackgroundColor">#F7F7F7</Color>
+            <Color x:Key="HoverBackgroundColor">#B0FFFF</Color>
+            <Color x:Key="HoverForegroundColor">#31D7E9</Color>
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Default">
-                    <Color x:Key="BaseColor">#17BDCF</Color>
-                    <Color x:Key="BackgroundColor">#F7F7F7</Color>
-                    <Color x:Key="HoverBackgroundColor">#B0FFFF</Color>
-                    <Color x:Key="HoverForegroundColor">#31D7E9</Color>
+                <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource BackgroundColor}" />
-                    <SolidColorBrush x:Key="ApplicationPageForegroundThemeBrush" Color="{StaticResource BaseColor}" />
+                    <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="{StaticResource BaseColor}" />
                     <SolidColorBrush x:Key="DefaultTextForegroundThemeBrush" Color="{StaticResource BaseColor}" />
                     <SolidColorBrush x:Key="AppBarItemForegroundThemeBrush" Color="{StaticResource BaseColor}" />
                     <SolidColorBrush x:Key="AppBarItemDisabledForegroundThemeBrush" Color="#33000000" />

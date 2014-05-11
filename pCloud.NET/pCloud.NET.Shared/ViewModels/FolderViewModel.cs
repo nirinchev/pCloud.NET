@@ -2,6 +2,8 @@
 using GalaSoft.MvvmLight.Ioc;
 using pCloud.Data;
 using pCloud.NET;
+using pCloud.Services;
+using pCloud.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,14 +19,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace pCloud.ViewModels
 {
-    public partial class MainViewModel : pCloudViewModelBase
+    public partial class FolderViewModel : pCloudViewModelBase
     {
-		private static readonly Icon[] knownFileTypes = new[] { Icon.Audio };
-
         private readonly pCloudClient client;
-        private readonly Stack<Folder> folderStack;
-
-		public event EventHandler<FileOpenRequestEventArgs> OpenFileRequested;
 
         public SortedObservableCollection<StorageItem> Items { get; private set; }
 
@@ -41,41 +38,28 @@ namespace pCloud.ViewModels
             {
                 if (this.isLoading != value)
                 {
-#if WINDOWS_APP
-                    this.RaisePropertyChanging();
-#endif
                     this.isLoading = value;
                     this.RaisePropertyChanged();
                 }
             }
         }
 
-        public Folder CurrentFolder
+        private ListedFolder folder;
+        public ListedFolder Folder
         {
             get
             {
-                return this.folderStack.Any() ? this.folderStack.Peek() : null;
+                return this.folder;
             }
-        }
-
-        private long CurrentFolderId
-        {
-            get
+            set
             {
-                var currentFolder = this.CurrentFolder;
-                return currentFolder != null ? currentFolder.FolderId : 0L;
+                if (this.folder != value)
+                {
+                    this.folder = value;
+                    this.RaisePropertyChanged();
+                }
             }
         }
-
-        public bool CanGoBack
-        {
-            get
-            {
-                return this.folderStack.Any();
-            }
-        }
-
-        public RelayCommand GoBackCommand { get; private set; }
 
         private bool progressVisible;
         public bool ProgressVisible
@@ -88,9 +72,6 @@ namespace pCloud.ViewModels
             {
                 if (this.progressVisible != value)
                 {
-#if WINDOWS_APP
-                    this.RaisePropertyChanging();
-#endif
                     this.progressVisible = value;
                     this.RaisePropertyChanged();
                 }
@@ -153,10 +134,9 @@ namespace pCloud.ViewModels
 
         public RelayCommand CopyLinkCommand { get; private set; }
 
-        public MainViewModel()
+        public FolderViewModel(long folderId)
         {
             this.client = SimpleIoc.Default.GetInstance<pCloudClient>();
-            this.folderStack = new Stack<Folder>();
 
             this.Items = new SortedObservableCollection<StorageItem>();
             this.Items.SortDescriptors.Add(LambdaSortDescriptor.Create<StorageItem, bool>(item => item is Folder, ListSortDirection.Descending));
@@ -166,7 +146,6 @@ namespace pCloud.ViewModels
             this.SelectedItems.CollectionChanged += OnSelectedItemsCollectionChanged;
 
             this.NavigateToItemCommand = new RelayCommand<ItemClickEventArgs>(this.NavigateToItem);
-            this.GoBackCommand = new RelayCommand(() => this.GoBack(), () => this.CanGoBack);
             this.RefreshCommand = new RelayCommand(() => this.Refresh());
             this.UploadCommand = new RelayCommand(() => this.Upload());
             this.SelectAllCommand = new RelayCommand(this.SelectAll);
@@ -175,7 +154,7 @@ namespace pCloud.ViewModels
             this.OpenWithCommand = new RelayCommand(() => this.OpenSelectedFile(), () => this.SelectedItems.Count == 1 && this.SelectedItems.Single() is File);
 			this.CopyLinkCommand = new RelayCommand(() => this.CopyLink(), () => this.SelectedItems.Count == 1 && this.SelectedItems.Single() is File);
 
-            this.PopulateItems(0);
+            this.Populate(folderId);
         }
 
         private void OnSelectedItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -186,20 +165,15 @@ namespace pCloud.ViewModels
             this.CopyLinkCommand.RaiseCanExecuteChanged();
         }
 
-        private async Task PopulateItems(long folderId, Action prePopulateAction = null)
+        private async Task Populate(long folderId)
         {
             this.IsLoading = true;
             try
             {
-                var folderContents = await this.client.ListFolderAsync(folderId);
-
-                if (prePopulateAction != null)
-                {
-                    prePopulateAction();
-                }
+                this.Folder = await this.client.ListFolderAsync(folderId);
 
                 this.Items.Clear();
-                foreach (var item in folderContents)
+                foreach (var item in this.Folder.Contents)
                 {
                     this.Items.Add(item);
                 }
@@ -210,16 +184,9 @@ namespace pCloud.ViewModels
             }
         }
 
-        private async Task GoBack()
-        {
-            this.folderStack.Pop();
-
-            await this.PopulateItems(this.CurrentFolderId, this.RaiseFolderChangingNotifications);
-        }
-
         private async Task Refresh()
         {
-            await this.PopulateItems(this.CurrentFolderId);
+            await this.Populate(this.Folder.FolderId);
         }
 
         private void NavigateToItem(ItemClickEventArgs args)
@@ -235,30 +202,13 @@ namespace pCloud.ViewModels
             }
         }
 
-        private async Task OpenFolder(Folder folder)
+        private void OpenFolder(Folder folder)
         {
-            await this.PopulateItems(folder.FolderId, () =>
-                {
-                    this.folderStack.Push(folder);
-                    this.RaiseFolderChangingNotifications();
-                });
-        }
-
-        private void RaiseFolderChangingNotifications()
-        {
-            this.RaisePropertyChanged(() => this.CurrentFolder);
-            this.RaisePropertyChanged(() => this.CanGoBack);
-            this.GoBackCommand.RaiseCanExecuteChanged();
+            SimpleIoc.Default.GetInstance<NavigationService>().Navigate<FolderPage>(folder.FolderId);
         }
 
         private async Task OpenFile(File file, bool displayApplicationPicker = false)
         {
-			if (!displayApplicationPicker && knownFileTypes.Contains(file.Icon))
-			{
-				await this.OpenKnownFile(file);
-				return;
-			}
-
             StorageFile tempFile = null;
             using (var cts = new CancellationTokenSource())
             using (this.ShowProgress(string.Format("Opening {0}", file.Name), cts))
@@ -284,30 +234,6 @@ namespace pCloud.ViewModels
             };
             await Launcher.LaunchFileAsync(tempFile, options);
         }
-
-		private async Task OpenKnownFile(File file)
-		{
-			switch (file.Icon)
-			{
-				case Icon.Video: 
-					var videoLink = await this.client.GetVideoLinkAsync(file.FileId);
-					this.RaiseOpenRequested(new FileOpenRequestEventArgs(videoLink, Icon.Video));
-					break;
-				case Icon.Audio:
-					var audioLink = await this.client.GetAudioLinkAsync(file.FileId);
-					this.RaiseOpenRequested(new FileOpenRequestEventArgs(audioLink, Icon.Audio));
-					break;
-			}
-		}
-
-		private void RaiseOpenRequested(FileOpenRequestEventArgs args)
-		{
-			var handler = this.OpenFileRequested;
-			if (handler != null)
-			{
-				handler(this, args);
-			}
-		}
 
         private IDisposable ShowProgress(string message, CancellationTokenSource cts = null)
         {
@@ -350,7 +276,7 @@ namespace pCloud.ViewModels
                     using (this.ShowProgress(string.Format("Uploading {0}", file.DisplayName), cts))
                     using (var stream = await System.IO.WindowsRuntimeStorageExtensions.OpenStreamForReadAsync(file))
                     {
-                        await this.client.UploadFileAsync(stream, this.CurrentFolderId, file.Name, cts.Token);
+                        await this.client.UploadFileAsync(stream, this.Folder.FolderId, file.Name, cts.Token);
                     }
                 }
 				await this.Refresh();

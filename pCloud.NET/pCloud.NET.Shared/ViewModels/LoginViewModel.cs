@@ -91,7 +91,7 @@ namespace pCloud.ViewModels
 				}
 				else
 				{
-					this.navigationService.Navigate<MainPage>();
+					this.navigationService.Navigate<FolderPage>();
 				}
 			}
 			catch

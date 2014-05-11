@@ -13,7 +13,6 @@ namespace pCloud
 		public static void RegisterTypes()
 		{
 			SimpleIoc.Default.Register<LoginViewModel>();
-            SimpleIoc.Default.Register<MainViewModel>();
 			SimpleIoc.Default.Register<NavigationService>();
 			SimpleIoc.Default.Register<NotificationService>();
 			SimpleIoc.Default.Register<LocalStorageService>();

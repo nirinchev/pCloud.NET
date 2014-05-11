@@ -82,12 +82,13 @@
   <ItemGroup>
     <Compile Include="ClientConstants.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
+    <Compile Include="Views\Chrome.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="Views\FolderPage.xaml.cs">
+      <DependentUpon>FolderPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SharePage.xaml.cs">
       <DependentUpon>SharePage.xaml</DependentUpon>
@@ -114,7 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MainPage.xaml">
+    <Page Include="Views\FolderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -145,6 +146,11 @@
       <Project>{ab5f5fba-5ec6-4d62-8e5a-2884b3589919}</Project>
       <Name>pCloud.NET SDK</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
+      <Name>Behaviors SDK %28XAML%29</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

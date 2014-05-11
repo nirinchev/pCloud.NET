@@ -8,7 +8,7 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace pCloud.ViewModels
 {
-    public partial class MainViewModel
+    public partial class FolderViewModel
     {
         partial void CopyLink()
         {

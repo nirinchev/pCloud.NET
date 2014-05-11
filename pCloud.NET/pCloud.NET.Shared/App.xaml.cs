@@ -36,6 +36,10 @@ namespace pCloud
             this.InitializeComponent();
 
 			IocConfig.RegisterTypes();
+
+#if WINDOWS_PHONE_APP
+            Windows.Phone.UI.Input.HardwareButtons.BackPressed += this.OnHardwareButtonsBackPressed;
+#endif
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -67,7 +71,7 @@ namespace pCloud
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
 
-				this.HandleLaunch<MainPage>(e.Arguments);
+				this.HandleLaunch<FolderPage>(ClientConstants.RootFolderId);
             }
 
             Window.Current.Activate();
@@ -120,6 +124,16 @@ namespace pCloud
             var rootFrame = sender as Frame;
             rootFrame.ContentTransitions = this.transitions ?? new TransitionCollection() { new NavigationThemeTransition() };
             rootFrame.Navigated -= this.RootFrame_FirstNavigated;
+        }
+
+        private void OnHardwareButtonsBackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
+        {
+            var frame = Window.Current.Content as Frame;
+            if (frame != null && frame.CanGoBack)
+            {
+                frame.GoBack();
+                e.Handled = true;
+            }
         }
 #endif
     }
