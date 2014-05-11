@@ -169,6 +169,12 @@
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
+    <SDKReference Include="Microsoft.PlayerFramework.Xaml, Version=1.8.2.2">
+      <Name>Microsoft Player Framework</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.PlayerFramework.Xaml.Adaptive, Version=1.8.2.2">
+      <Name>Microsoft Player Framework Adaptive Streaming Plugin</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

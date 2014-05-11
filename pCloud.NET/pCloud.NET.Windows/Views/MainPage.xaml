@@ -6,6 +6,8 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Extensions="using:WinRTXamlToolkit.Controls.Extensions"
     xmlns:local="using:pCloud.Views"
+	xmlns:mmppf="using:Microsoft.PlayerFramework"
+	xmlns:adaptive="using:Microsoft.PlayerFramework.Adaptive"
     xmlns:converters="using:pCloud.Converters"
     xmlns:pCloud="using:pCloud"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -54,7 +56,7 @@
                 </DataTemplate>
             </pCloud:StorageItemTemplateSelector.FileTemplate>
         </pCloud:StorageItemTemplateSelector>
-    </Page.Resources>
+	</Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -113,11 +115,16 @@
                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="80,10,80,40"
                        Text="{Binding ProgressMessage}" />
         </Grid>
-    </Grid>
+
+		<mmppf:MediaPlayer x:Name="MediaPlayer" Visibility="Collapsed"/>
+	</Grid>
     
     <Page.BottomAppBar>
 		<CommandBar x:Name="AppBar" IsSticky="True">
-            <AppBarButton Icon="Refresh" Label="Refresh" Command="{Binding RefreshCommand}" />
+			<AppBarButton Icon="Play" Label="Play" Click="MediaPlayerButtonClick" Visibility="Collapsed" x:Name="PlayButton"/>
+			<AppBarButton Icon="Pause" Label="Pause" Click="MediaPlayerButtonClick" Visibility="Collapsed" x:Name="PauseButton"/>
+			<AppBarButton Icon="Stop" Label="Stop" Click="MediaPlayerButtonClick" Visibility="Collapsed" x:Name="StopButton"/>
+			<AppBarButton Icon="Refresh" Label="Refresh" Command="{Binding RefreshCommand}" />
             <AppBarButton Icon="Upload" Label="Upload" Command="{Binding UploadCommand}" />
             <AppBarButton Icon="SelectAll" Label="Select all" Command="{Binding SelectAllCommand}" />
             <CommandBar.SecondaryCommands>

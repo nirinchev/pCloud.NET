@@ -19,8 +19,12 @@ namespace pCloud.ViewModels
 {
     public partial class MainViewModel : pCloudViewModelBase
     {
+		private static readonly KnownFileType[] knownFileTypes = new[] { KnownFileType.Audio };
+
         private readonly pCloudClient client;
         private readonly Stack<Folder> folderStack;
+
+		public event EventHandler<FileOpenRequestEventArgs> OpenFileRequested;
 
         public SortedObservableCollection<StorageItem> Items { get; private set; }
 
@@ -249,6 +253,13 @@ namespace pCloud.ViewModels
 
         private async Task OpenFile(File file, bool displayApplicationPicker = false)
         {
+			KnownFileType fileType;
+			if (!displayApplicationPicker && file.TryGetKnownFileType(out fileType) && knownFileTypes.Contains(fileType))
+			{
+				await this.OpenKnownFile(file);
+				return;
+			}
+
             StorageFile tempFile = null;
             using (var cts = new CancellationTokenSource())
             using (this.ShowProgress(string.Format("Opening {0}", file.Name), cts))
@@ -274,6 +285,34 @@ namespace pCloud.ViewModels
             };
             await Launcher.LaunchFileAsync(tempFile, options);
         }
+
+		private async Task OpenKnownFile(File file)
+		{
+			KnownFileType fileType;
+			if (file.TryGetKnownFileType(out fileType))
+			{
+				switch (fileType)
+				{
+					case KnownFileType.Video: 
+						var videoLink = await this.client.GetVideoLinkAsync(file.FileId);
+						this.RaiseOpenRequested(new FileOpenRequestEventArgs(videoLink, KnownFileType.Video));
+						break;
+					case KnownFileType.Audio:
+						var audioLink = await this.client.GetAudioLinkAsync(file.FileId);
+						this.RaiseOpenRequested(new FileOpenRequestEventArgs(audioLink, KnownFileType.Audio));
+						break;
+				}
+			}
+		}
+
+		private void RaiseOpenRequested(FileOpenRequestEventArgs args)
+		{
+			var handler = this.OpenFileRequested;
+			if (handler != null)
+			{
+				handler(this, args);
+			}
+		}
 
         private IDisposable ShowProgress(string message, CancellationTokenSource cts = null)
         {

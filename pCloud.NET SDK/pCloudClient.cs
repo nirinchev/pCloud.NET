@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net.Http.Headers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,9 +103,7 @@ namespace pCloud.NET
         {
             var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
 
-			var content = new MultipartFormDataContent();
-			content.Add(new StreamContent(file), Guid.NewGuid().ToString(), name);
-			var response = await this.httpClient.PostAsync(requestUri, content, cancellationToken);
+			var response = await this.httpClient.PostAsync(requestUri, this.GetFileUploadContent(file, name), cancellationToken);
             var json = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
             if (json.result != 0)
             {
@@ -160,6 +159,18 @@ namespace pCloud.NET
 			return response.link;
 		}
 
+		public async Task<string> GetVideoLinkAsync(long fileId)
+		{
+			var response = await this.GetJsonAsync(this.BuildRequestUri("getvideolink", new { fileid = fileId, fixedbitrate = true, resolution = "1024x768", abitrate = 128, vbitrate = 1024 }));
+			return string.Format("http://{0}{1}", response.hosts[0], response.path);
+		}
+
+		public async Task<string> GetAudioLinkAsync(long fileId)
+		{
+			var response = await this.GetJsonAsync(this.BuildRequestUri("getaudiolink", new { fileid = fileId, abitrate = 128 }));
+			return string.Format("http://{0}{1}", response.hosts[0], response.path);
+		}
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -167,6 +178,21 @@ namespace pCloud.NET
                 this.httpClient.Dispose();
             }
         }
+
+		private HttpContent GetFileUploadContent(Stream file, string name)
+		{
+			var content = new MultipartFormDataContent();
+
+			var fileContent = new StreamContent(file);
+			fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+			{
+				Name = "\"files\"",
+				FileName = "\"" + name + "\""
+			};
+			content.Add(fileContent);
+
+			return content;
+		}
 
         private async Task<dynamic> GetJsonAsync(string uri)
         {

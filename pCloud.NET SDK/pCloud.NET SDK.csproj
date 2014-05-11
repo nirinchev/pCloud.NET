@@ -36,8 +36,10 @@
   <ItemGroup>
     <Compile Include="EncodingRewriterMessageHandler.cs" />
     <Compile Include="File.cs" />
+    <Compile Include="FileExtensions.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="Icon.cs" />
+    <Compile Include="KnownFileType.cs" />
     <Compile Include="StorageItem.cs" />
     <Compile Include="pCloudClient.cs" />
     <Compile Include="pCloudException.cs" />
