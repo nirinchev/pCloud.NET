@@ -23,6 +23,12 @@ namespace pCloud.NET
         [DataMember(Name = "modified")]
         public DateTime Modified { get; set; }
 
+        [DataMember(Name = "thumb")]
+        public bool HasThumbnail { get; set; }
+
+        [DataMember(Name = "icon")]
+        public string Icon { get; set; }
+
         internal StorageItem()
         {
 

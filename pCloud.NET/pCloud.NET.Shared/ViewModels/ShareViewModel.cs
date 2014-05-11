@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
-using Windows.UI.Core;
 
 namespace pCloud.ViewModels
 {
@@ -153,7 +152,7 @@ namespace pCloud.ViewModels
 					return await vm.File.OpenReadAsync();
 				});
 
-				var file = await this.pCloudClient.UploadFileAsync(fileStream.AsStreamForRead(), parentFolderId, vm.Name);
+				var file = await this.pCloudClient.UploadFileAsync(fileStream.AsStreamForRead(), parentFolderId, vm.Name, default(CancellationToken));
 				results.Add(file);
 			}
 

@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pCloud.NET
@@ -14,6 +16,7 @@ namespace pCloud.NET
 	{
         private readonly HttpClient httpClient;
         private readonly string authToken;
+        private readonly Regex hashPropertyRegex = new Regex("\"hash\": .*");
 
 		public string AuthToken
 		{
@@ -98,13 +101,13 @@ namespace pCloud.NET
             return result.ToArray();
         }
 
-        public async Task<File> UploadFileAsync(Stream file, long parentFolderId, string name)
+        public async Task<File> UploadFileAsync(Stream file, long parentFolderId, string name, CancellationToken cancellationToken)
         {
             var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
 
 			var content = new MultipartFormDataContent();
 			content.Add(new StreamContent(file), Guid.NewGuid().ToString(), name);
-			var response = await this.httpClient.PostAsync(requestUri, content);
+			var response = await this.httpClient.PostAsync(requestUri, content, cancellationToken);
             var json = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
             if (json.result != 0)
             {
@@ -114,7 +117,7 @@ namespace pCloud.NET
             return json.metadata[0].ToObject<File>();
         }
 
-        public async Task DownloadFileAsync(long fileId, Stream stream)
+        public async Task DownloadFileAsync(long fileId, Stream stream, CancellationToken cancellationToken)
         {
             var requestUri = this.BuildRequestUri("getfilelink", new { fileid = fileId });
             var downloadResponse = await this.GetJsonAsync(requestUri);
@@ -122,7 +125,8 @@ namespace pCloud.NET
             var fileUri = string.Format("https://{0}{1}", downloadResponse.hosts[0], downloadResponse.path);
             HttpResponseMessage response = await this.httpClient.GetAsync(fileUri, HttpCompletionOption.ResponseHeadersRead);
 
-            await response.Content.CopyToAsync(stream);
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            await responseStream.CopyToAsync(stream, 4096, cancellationToken);
         }
 
         public async Task<File> CopyFileAsync(long fileId, long toFolderId, string toName)
@@ -140,6 +144,11 @@ namespace pCloud.NET
         public async Task DeleteFileAsync(long fileId)
         {
             await this.GetJsonAsync(this.BuildRequestUri("deletefile", new { fileid = fileId }));
+        }
+
+        public string GetThumbnailUri(long fileId, string sizeString)
+        {
+            return this.BuildRequestUri("getthumb", new { fileid = fileId, size = sizeString });
         }
 
         public async Task<string> GetPublicFileLinkAsync(long fileId, DateTime? expires)
@@ -165,6 +174,10 @@ namespace pCloud.NET
         private async Task<dynamic> GetJsonAsync(string uri)
         {
             var jsonString = await this.httpClient.GetStringAsync(uri);
+
+            // remove the hash property from the response because it often is as big as an UInt64 and Json.Net can't handle that
+            jsonString = hashPropertyRegex.Replace(jsonString, string.Empty);
+
             dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonString);
             if (json.result != 0)
             {

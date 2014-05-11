@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace pCloud
+namespace pCloud.Data
 {
     public enum ListSortDirection
     {
@@ -46,16 +46,17 @@ namespace pCloud
 
     public static class LambdaSortDescriptor
     {
-        public static SortDescriptorBase Create<TElement, TKey>(Expression<Func<TKey, TElement>> lambda, ListSortDirection direction)
+        public static SortDescriptorBase Create<TElement, TKey>(Expression<Func<TElement, TKey>> lambda, ListSortDirection direction)
         {
             return new SortDescriptor<TElement, TKey>(lambda, direction);
         }
 
         private class SortDescriptor<TElement, TKey> : SortDescriptorBase
         {
-            private readonly Expression<Func<TKey, TElement>> lambda;
+            private readonly Expression<Func<TElement, TKey>> lambda;
 
-            internal SortDescriptor(Expression<Func<TKey, TElement>> lambda, ListSortDirection direction) : base(direction)
+            internal SortDescriptor(Expression<Func<TElement, TKey>> lambda, ListSortDirection direction)
+                : base(direction)
             {
                 this.lambda = lambda;
             }

@@ -12,10 +12,11 @@ namespace pCloud.ViewModels
 		{
 			var dataPackage = new DataPackage();
 			dataPackage.SetText(shareLink);
+            dataPackage.SetWebLink(new Uri(shareLink));
 			Clipboard.SetContent(dataPackage);
 
 			var notificationService = SimpleIoc.Default.GetInstance<NotificationService>();
-			notificationService.ShowToast("File(s) shared", "A link has been copied to the clipboard", "Assets/Logo.scale-100.png");
+			notificationService.ShowToast("File shared", "A link has been copied to the clipboard", "Assets/Logo.scale-100.png");
 
 			this.Complete();
 		}
