@@ -14,6 +14,7 @@
 		<converters:ThumbnailToImageConverter x:Key="ThumbnailToImageConverter" />
 		<converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
+		<converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 	</Page.Resources>
 	
     <Grid>
@@ -30,7 +31,6 @@
 			</ListView.ItemsPanel>
 		</ListView>
 
-
 		<Grid Visibility="{Binding IsUrlGenerated, Converter={StaticResource BooleanToVisibilityConverter}}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -40,14 +40,18 @@
 			<TextBlock Text="Copy the link and share it with your friends" FontSize="20" Margin="10" HorizontalAlignment="Stretch" />
 			<TextBox IsReadOnly="True" Text="{Binding Url}" SelectionStart="0" SelectionLength="{Binding UrlLength}" FontSize="22" Margin="10"  HorizontalAlignment="Stretch" Grid.Row="1" />
 		</Grid>
+
+		<Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"  Background="#C0000000">
+			<ProgressRing IsActive="{Binding IsBusy}" HorizontalAlignment="Center" Width="20" Height="20" />
+		</Grid>
     </Grid>
 	
 	<Page.BottomAppBar>
 		<CommandBar >
 			<CommandBar.PrimaryCommands>
-				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
-				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
-				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
+				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" Visibility="{Binding IsUrlGenerated, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
 				<AppBarButton Label="Done" Command="{Binding CancelCommand}" Icon="Accept" Visibility="{Binding IsUrlGenerated, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</CommandBar.PrimaryCommands>
 		</CommandBar>

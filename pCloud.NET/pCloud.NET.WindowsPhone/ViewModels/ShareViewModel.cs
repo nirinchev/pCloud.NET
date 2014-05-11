@@ -41,6 +41,7 @@ namespace pCloud.ViewModels
 
 		partial void HandleShareRequested(string shareLink)
 		{
+			this.IsBusy = false;
 			this.Url = shareLink;
 		}
 	}

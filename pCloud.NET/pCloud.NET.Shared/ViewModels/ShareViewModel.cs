@@ -20,6 +20,7 @@ namespace pCloud.ViewModels
 		private readonly pCloudClient pCloudClient = SimpleIoc.Default.GetInstance<pCloudClient>();
 
 		private ShareOperation currentOperation;
+		private bool isBusy;
 
 		public RelayCommand UploadCommand { get; set; }
 		public RelayCommand ShareCommand { get; set; }
@@ -30,6 +31,18 @@ namespace pCloud.ViewModels
 			get
 			{
 				return this.sharedItems;
+			}
+		}
+
+		public bool IsBusy
+		{
+			get
+			{
+				return this.isBusy;
+			}
+			set
+			{
+				this.Set(ref this.isBusy, value);
 			}
 		}
 
@@ -86,56 +99,68 @@ namespace pCloud.ViewModels
 			this.SharedItems.Clear();
 		}
 
-		private async void UploadItems()
+		private void UploadItems()
 		{
-			this.currentOperation.ReportStarted();
-			try
-			{
-				var parentFolderId = await this.GetUploadFolderId();
-
-				var test = await UploadFiles(parentFolderId);
-
-				this.Complete();
-			}
-			catch
-			{
-				this.currentOperation.ReportError("An error occured while uploading the files. Try again later.");
-			}
+			this.ExecuteRequest(this.UploadItemsCore(), "An error occured while uploading the files. Try again later.");
 		}
 
-		private async void ShareItems()
+		private async Task UploadItemsCore()
+		{
+			var parentFolderId = await this.GetUploadFolderId();
+
+			await UploadFiles(parentFolderId);
+
+			this.Complete();
+		}
+
+		private void ShareItems()
+		{
+			this.ExecuteRequest(this.ShareItemsCore(), "An error occured while sharing the files. Try again later.");
+		}
+
+		private async Task ShareItemsCore()
+		{
+			var parentFolderId = await this.GetUploadFolderId();
+
+			var files = this.SharedItems.OfType<SharedFileViewModel>();
+			var isFolderUpload = files.Count() > 1;
+			if (isFolderUpload)
+			{
+				var newFolder = await this.pCloudClient.CreateFolderAsync(parentFolderId, DateTime.Now.ToString("yyyy.MM.dd - HH.mm.ss"));
+				parentFolderId = newFolder.FolderId;
+			}
+
+			var uploadedFiles = await this.UploadFiles(parentFolderId);
+			
+			string shareLink;
+			if (isFolderUpload)
+			{
+				shareLink = await pCloudClient.GetPublicFolderLinkAsync(parentFolderId, null);
+			}
+			else
+			{
+				shareLink = await pCloudClient.GetPublicFileLinkAsync(uploadedFiles.First().FileId, null);
+			}
+			
+			this.HandleShareRequested(shareLink);
+		}
+
+		private async Task ExecuteRequest(Task request, string errorMessage)
 		{
 			this.currentOperation.ReportStarted();
+			this.IsBusy = true;
 
 			try
 			{
-				var parentFolderId = await this.GetUploadFolderId();
-
-				var files = this.SharedItems.OfType<SharedFileViewModel>();
-				var isFolderUpload = files.Count() > 1;
-				if (isFolderUpload)
-				{
-					var newFolder = await this.pCloudClient.CreateFolderAsync(parentFolderId, DateTime.Now.ToString("yyyy.MM.dd - HH.mm.ss"));
-					parentFolderId = newFolder.FolderId;
-				}
-				
-				var uploadedFiles = await this.UploadFiles(parentFolderId);
-				
-				string shareLink;
-				if (isFolderUpload)
-				{
-					shareLink = await pCloudClient.GetPublicFolderLinkAsync(parentFolderId, null);
-				}
-				else
-				{
-					shareLink = await pCloudClient.GetPublicFileLinkAsync(uploadedFiles.First().FileId, null);
-				}
-
-				this.HandleShareRequested(shareLink);
+				await request;
 			}
 			catch
 			{
-				this.currentOperation.ReportError("An error occured while sharing the files. Try again later.");
+				this.currentOperation.ReportError(errorMessage);
+			}
+			finally
+			{
+				this.IsBusy = false;
 			}
 		}
 

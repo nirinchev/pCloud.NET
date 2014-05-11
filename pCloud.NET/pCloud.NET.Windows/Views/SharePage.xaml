@@ -10,6 +10,8 @@
 
 	<Page.Resources>
 		<converters:ThumbnailToImageConverter x:Key="ThumbnailToImageConverter" />
+		<converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+		<converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 	</Page.Resources>
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -25,14 +27,18 @@
 				</ItemsPanelTemplate>
 			</ListView.ItemsPanel>
 		</ListView>
+
+		<Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"  Background="#C0000000">
+			<ProgressRing IsActive="{Binding IsBusy}" HorizontalAlignment="Center" Width="50" Height="50" />
+		</Grid>
 	</Grid>
 
 	<Page.BottomAppBar>
 		<CommandBar IsSticky="True" IsOpen="True" Closed="OnCommandBarClosed">
 			<CommandBar.PrimaryCommands>
-				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" />
-				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" />
-				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" />
+				<AppBarButton Label="Upload" Command="{Binding UploadCommand}" Icon="Upload" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+				<AppBarButton Label="Share" Command="{Binding ShareCommand}" Icon="ReShare" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
+				<AppBarButton Label="Cancel" Command="{Binding CancelCommand}" Icon="Cancel" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" />
 			</CommandBar.PrimaryCommands>
 		</CommandBar>
 	</Page.BottomAppBar>

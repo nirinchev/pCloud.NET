@@ -10,6 +10,7 @@ namespace pCloud.ViewModels
     {
 		private readonly NavigationService navigationService = SimpleIoc.Default.GetInstance<NavigationService>();
 
+		private object navigationParameter;
 		private string username;
 		private string password;
 		private bool isBusy;
@@ -72,6 +73,11 @@ namespace pCloud.ViewModels
 			this.LoginCommand = new RelayCommand(this.Login, this.CanLogin);
 		}
 
+		public void SetSharingOperation(object navigationParameter)
+		{
+			this.navigationParameter = navigationParameter;
+		}
+
 		private async void Login()
 		{
 			this.IsBusy = true;
@@ -79,7 +85,14 @@ namespace pCloud.ViewModels
 			{
 				var client = await pCloudClient.CreateClientAsync(this.Username, this.Password);
 				IocConfig.RegisterpCloudClient(client);
-				this.navigationService.Navigate<MainPage>();
+				if (navigationParameter != null)
+				{
+					this.navigationService.Navigate<SharePage>(navigationParameter);
+				}
+				else
+				{
+					this.navigationService.Navigate<MainPage>();
+				}
 			}
 			catch
 			{
