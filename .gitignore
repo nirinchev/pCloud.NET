@@ -8,3 +8,4 @@
 *.suo
 *.[Cc]ache
 .[Jj]ust[Cc]ode/
+/packages/
