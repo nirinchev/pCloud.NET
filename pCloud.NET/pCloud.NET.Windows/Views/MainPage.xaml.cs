@@ -36,7 +36,7 @@ namespace pCloud.Views
 		{
 			switch (e.FileType)
 			{
-				case KnownFileType.Audio:
+				case Icon.Audio:
 					this.LoadMediaPlayer(e.FileLink);
 					break;
 			}

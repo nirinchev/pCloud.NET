@@ -19,7 +19,7 @@ namespace pCloud.ViewModels
 {
     public partial class MainViewModel : pCloudViewModelBase
     {
-		private static readonly KnownFileType[] knownFileTypes = new[] { KnownFileType.Audio };
+		private static readonly Icon[] knownFileTypes = new[] { Icon.Audio };
 
         private readonly pCloudClient client;
         private readonly Stack<Folder> folderStack;
@@ -253,8 +253,7 @@ namespace pCloud.ViewModels
 
         private async Task OpenFile(File file, bool displayApplicationPicker = false)
         {
-			KnownFileType fileType;
-			if (!displayApplicationPicker && file.TryGetKnownFileType(out fileType) && knownFileTypes.Contains(fileType))
+			if (!displayApplicationPicker && knownFileTypes.Contains(file.Icon))
 			{
 				await this.OpenKnownFile(file);
 				return;
@@ -288,20 +287,16 @@ namespace pCloud.ViewModels
 
 		private async Task OpenKnownFile(File file)
 		{
-			KnownFileType fileType;
-			if (file.TryGetKnownFileType(out fileType))
+			switch (file.Icon)
 			{
-				switch (fileType)
-				{
-					case KnownFileType.Video: 
-						var videoLink = await this.client.GetVideoLinkAsync(file.FileId);
-						this.RaiseOpenRequested(new FileOpenRequestEventArgs(videoLink, KnownFileType.Video));
-						break;
-					case KnownFileType.Audio:
-						var audioLink = await this.client.GetAudioLinkAsync(file.FileId);
-						this.RaiseOpenRequested(new FileOpenRequestEventArgs(audioLink, KnownFileType.Audio));
-						break;
-				}
+				case Icon.Video: 
+					var videoLink = await this.client.GetVideoLinkAsync(file.FileId);
+					this.RaiseOpenRequested(new FileOpenRequestEventArgs(videoLink, Icon.Video));
+					break;
+				case Icon.Audio:
+					var audioLink = await this.client.GetAudioLinkAsync(file.FileId);
+					this.RaiseOpenRequested(new FileOpenRequestEventArgs(audioLink, Icon.Audio));
+					break;
 			}
 		}
 

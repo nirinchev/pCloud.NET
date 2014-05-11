@@ -22,8 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StorageItemIconToSymbolConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\StorageItemIconUriConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StringFormatConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ThumbnailToImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\QueryableSorting.cs" />
