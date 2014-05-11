@@ -38,11 +38,11 @@
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 			<TextBlock Text="Copy the link and share it with your friends" FontSize="20" Margin="10" HorizontalAlignment="Stretch" />
-			<TextBox IsReadOnly="True" Text="{Binding Url}" SelectionStart="0" SelectionLength="{Binding UrlLength}" FontSize="22" Margin="10"  HorizontalAlignment="Stretch" Grid.Row="1" />
+			<TextBox IsReadOnly="True" Text="{Binding Url}" SelectionStart="0" SelectionLength="{Binding UrlLength}" FontSize="22" Margin="10"  HorizontalAlignment="Stretch" Grid.Row="1" GotFocus="TextBox_GotFocus" AcceptsReturn="True" TextWrapping="Wrap" />
 		</Grid>
 
 		<Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"  Background="#C0000000">
-			<ProgressRing IsActive="{Binding IsBusy}" HorizontalAlignment="Center" Width="20" Height="20" />
+			<ProgressRing IsActive="{Binding IsBusy}" Background="Transparent" HorizontalAlignment="Center" Width="20" Height="20" />
 		</Grid>
     </Grid>
 	

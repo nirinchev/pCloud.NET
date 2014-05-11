@@ -33,5 +33,11 @@ namespace pCloud.Views
 			var shareOperation = e.Parameter as ShareOperation;
 			this.ViewModel.Initialize(shareOperation);
 		}
+
+		private void TextBox_GotFocus(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		{
+			var tb = (TextBox)sender;
+			tb.SelectAll();
+		}
 	}
 }
