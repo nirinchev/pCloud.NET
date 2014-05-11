@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="a2d529a0-4be8-421d-8796-7133c0f5ab57" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>pCloud.NET.WindowsPhone</DisplayName>
-    <PublisherDisplayName>killer4o</PublisherDisplayName>
+    <PublisherDisplayName>pCloud.Net</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
