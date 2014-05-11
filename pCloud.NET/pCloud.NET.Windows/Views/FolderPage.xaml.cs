@@ -21,10 +21,7 @@ namespace pCloud.Views
 
         private void OnItemGridViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.itemGridView.SelectedItems.Count > 0)
-            {
-                this.AppBar.IsOpen = true;
-            }
+            this.AppBar.IsOpen = this.itemGridView.SelectedItems.Count > 0;
         }
 
         

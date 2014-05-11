@@ -82,7 +82,6 @@
   <ItemGroup>
     <Compile Include="ClientConstants.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
-    <Compile Include="Views\Chrome.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
