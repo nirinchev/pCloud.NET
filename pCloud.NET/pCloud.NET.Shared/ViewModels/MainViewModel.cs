@@ -37,7 +37,9 @@ namespace pCloud.ViewModels
             {
                 if (this.isLoading != value)
                 {
+#if WINDOWS_APP
                     this.RaisePropertyChanging();
+#endif
                     this.isLoading = value;
                     this.RaisePropertyChanged();
                 }
@@ -82,7 +84,9 @@ namespace pCloud.ViewModels
             {
                 if (this.progressVisible != value)
                 {
+#if WINDOWS_APP
                     this.RaisePropertyChanging();
+#endif
                     this.progressVisible = value;
                     this.RaisePropertyChanged();
                 }
@@ -100,7 +104,9 @@ namespace pCloud.ViewModels
             {
                 if (this.progressMessage != value)
                 {
-                    this.RaisePropertyChanging();
+#if WINDOWS_APP
+					this.RaisePropertyChanging();
+#endif
                     this.progressMessage = value;
                     this.RaisePropertyChanged();
                 }
@@ -118,8 +124,10 @@ namespace pCloud.ViewModels
             {
                 if (this.cancelOperationCommand != value)
                 {
+#if WINDOWS_APP
                     this.RaisePropertyChanging();
-                    this.cancelOperationCommand = value;
+#endif
+					this.cancelOperationCommand = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -160,8 +168,8 @@ namespace pCloud.ViewModels
             this.SelectAllCommand = new RelayCommand(this.SelectAll);
             this.ClearSelectionCommand = new RelayCommand(this.SelectedItems.Clear, this.SelectedItems.Any);
             this.DeleteItemsCommand = new RelayCommand(() => this.DeleteSelectedItems(), this.SelectedItems.Any);
-            this.OpenWithCommand = new RelayCommand(() => this.OpenSelectedFile(), () => this.SelectedItems.SingleOrDefault() is File);
-            this.CopyLinkCommand = new RelayCommand(() => this.CopyLink(), () => this.SelectedItems.SingleOrDefault() is File);
+            this.OpenWithCommand = new RelayCommand(() => this.OpenSelectedFile(), () => this.SelectedItems.Count == 1 && this.SelectedItems.Single() is File);
+			this.CopyLinkCommand = new RelayCommand(() => this.CopyLink(), () => this.SelectedItems.Count == 1 && this.SelectedItems.Single() is File);
 
             this.PopulateItems(0);
         }
@@ -259,7 +267,9 @@ namespace pCloud.ViewModels
 
             var options = new LauncherOptions
             {
-                DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMinimum,
+#if WINDOWS_APP
+				DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMinimum,
+#endif
                 DisplayApplicationPicker = displayApplicationPicker
             };
             await Launcher.LaunchFileAsync(tempFile, options);

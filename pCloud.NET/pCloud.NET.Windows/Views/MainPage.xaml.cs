@@ -11,5 +11,11 @@ namespace pCloud.Views
 			this.InitializeComponent();
             this.DataContext = SimpleIoc.Default.GetInstance<MainViewModel>();
 		}
+
+		private void OnGridViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var gridView = (GridView)sender;
+			this.AppBar.IsOpen = gridView.SelectedItems.Count > 0;
+		}
 	}
 }

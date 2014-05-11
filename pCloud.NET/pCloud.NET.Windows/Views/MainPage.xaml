@@ -81,7 +81,8 @@
             Extensions:GridViewExtensions.BindableSelection="{Binding SelectedItems}"
             IsSwipeEnabled="false"
             IsItemClickEnabled="True"
-            ItemTemplateSelector="{StaticResource StorageItemTemplateSelector}">
+            ItemTemplateSelector="{StaticResource StorageItemTemplateSelector}"
+			SelectionChanged="OnGridViewSelectionChanged">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="ItemClick">
                     <Core:InvokeCommandAction Command="{Binding NavigateToItemCommand}" />
@@ -104,7 +105,7 @@
         <Border Grid.RowSpan="2" Background="Gray" Opacity="0.7" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Button Command="{Binding CancelOperationCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" />
         </Border>
-        <Grid Background="Pink" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+        <Grid Background="Black" Visibility="{Binding ProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
               Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*" />
@@ -119,7 +120,7 @@
     </Grid>
     
     <Page.BottomAppBar>
-        <CommandBar>
+		<CommandBar x:Name="AppBar" IsSticky="True">
             <AppBarButton Icon="Refresh" Label="Refresh" Command="{Binding RefreshCommand}" />
             <AppBarButton Icon="Upload" Label="Upload" Command="{Binding UploadCommand}" />
             <AppBarButton Icon="SelectAll" Label="Select all" Command="{Binding SelectAllCommand}" />
