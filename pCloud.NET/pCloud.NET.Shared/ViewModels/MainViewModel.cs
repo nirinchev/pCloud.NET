@@ -353,6 +353,7 @@ namespace pCloud.ViewModels
                         await this.client.UploadFileAsync(stream, this.CurrentFolderId, file.Name, cts.Token);
                     }
                 }
+				await this.Refresh();
             }
         }
 

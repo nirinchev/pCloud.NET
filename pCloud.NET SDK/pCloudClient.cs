@@ -104,12 +104,7 @@ namespace pCloud.NET
             var requestUri = this.BuildRequestUri("uploadfile", new { folderid = parentFolderId, filename = name, nopartial = 1 });
 
 			var response = await this.httpClient.PostAsync(requestUri, this.GetFileUploadContent(file, name), cancellationToken);
-            var json = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
-            if (json.result != 0)
-            {
-                throw (Exception)CreateException(json);
-            }
-
+			var json = this.Deserialize(await response.Content.ReadAsStringAsync());
             return json.metadata[0].ToObject<File>();
         }
 
@@ -198,17 +193,21 @@ namespace pCloud.NET
         {
             var jsonString = await this.httpClient.GetStringAsync(uri);
 
-            // remove the hash property from the response because it often is as big as an UInt64 and Json.Net can't handle that
-            jsonString = hashPropertyRegex.Replace(jsonString, string.Empty);
-
-            dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonString);
-            if (json.result != 0)
-            {
-                throw (Exception)CreateException(json);
-            }
-
-            return json;
+			return this.Deserialize(jsonString);
         }
+
+		private dynamic Deserialize(string content)
+		{
+			// remove the hash property from the response because it often is as big as an UInt64 and Json.Net can't handle that
+			content = this.hashPropertyRegex.Replace(content, string.Empty);
+			dynamic json = JsonConvert.DeserializeObject<dynamic>(content);
+			if (json.result != 0)
+			{
+				throw (Exception)CreateException(json);
+			}
+
+			return json;
+		}
 
         private string BuildRequestUri(string method, object parameters = null)
         {
