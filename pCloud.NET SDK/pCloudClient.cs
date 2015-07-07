@@ -66,9 +66,9 @@ namespace pCloud.NET
             return response.metadata.ToObject<Folder>();
         }
 
-        public async Task<Folder> RenameFolderAsync(long folderId, string toPath)
+        public async Task<Folder> RenameFolderAsync(long folderId, long toFolderId, string toName)
         {
-            var response = await this.GetJsonAsync(this.BuildRequestUri("renamefolder", new { folderid = folderId, toPath = toPath }));
+            var response = await this.GetJsonAsync(this.BuildRequestUri("renamefolder", new { folderid = folderId, tofolderid = toFolderId, toname = toName }));
             return response.metadata.ToObject<Folder>();
         }
 
@@ -167,6 +167,12 @@ namespace pCloud.NET
 			var response = await this.GetJsonAsync(this.BuildRequestUri("getaudiolink", new { fileid = fileId, abitrate = 128 }));
 			return string.Format("http://{0}{1}", response.hosts[0], response.path);
 		}
+
+        public async Task<UserInfo> GetUserInfoAsync()
+        {
+            var response = await this.GetJsonAsync(this.BuildRequestUri("userinfo"));
+            return response.ToObject<UserInfo>();
+        }
 
         protected virtual void Dispose(bool disposing)
         {
